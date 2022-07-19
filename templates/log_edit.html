@@ -1,0 +1,66 @@
+<DOCTYPE! html>
+<html>
+<head>
+    <title> Edit Log </title>
+    <link href="/static/css/main.min.css" rel="stylesheet" >
+</head>
+<body  >
+    <nav  >
+        <form action="/userpage/{{name}}" method="GET"  >
+            <input type="submit" value="Home"  >
+        </form>
+        <button  >
+          <span  ></span>
+        </button>
+      
+        <div  >
+          <ul  >
+            <form action="/tracker/{{name}}/{{tracker_name}}"  >
+                <input type="submit" value="Logs"  >
+            </form>
+          </ul>
+        </div>
+      </nav>
+
+    <h2  > Edit Log</h2>
+<form action="/tracker/{{tracker_name}}/edit/{{log_id}}/{{name}}" method="POST" id="edit"  >
+    <div  >
+        <label  >When:</label>
+        <div  >
+        <input type='datetime-local' name='datetime' value = {{log_time}}  required />
+    </div>
+    <div  ></div>
+    </div>
+    {% if current_tracker['tracker_type'] == 'numeric'%}
+    <div  >
+        <label  >Value</label>
+        <div  >
+        <input type="number" step="any" name="value" placeholder={{current_log.value}}  required/>
+    </div>
+    <div  ></div>
+    </div>
+    {%else%}
+    <div  >
+        <label  >Select from the following</label>
+        <div  >    
+        <select  name="value" id = 'value' aria-placeholder={{current_log.value}}  >
+            {%for i in current_tracker['tracker_settings'].split(',')%}
+                <option value = {{i}}>{{i}}</option>
+            {% endfor %}
+            </select> 
+        </div>
+            <div  ></div>
+    </div>
+    {%endif%}
+    <div  >
+        <label  >Notes</label>
+        <div  >
+        <input type="text" name="notes" placeholder={{current_log.notes}}  required />
+    </div>
+    <div  ></div>
+</div>
+    
+<div  >
+    <input type="submit" value = "Submit"  >
+</div>
+</form>
