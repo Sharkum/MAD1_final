@@ -1,5 +1,4 @@
 import datetime , calendar , os
-from importlib_metadata import method_cache
 from sqlalchemy import extract,func
 import numpy as np
 import matplotlib.pyplot as plt
@@ -155,7 +154,7 @@ def add_log(UserName):
         
         return redirect('/'+ UserName+ '/logs')
 
-@app.route('/<string:UserName>/logs/<integer:LogID>/delete', methods=['DELETE'])
+@app.route('/<string:UserName>/logs/<string:LogID>/delete', methods=['DELETE'])
 def log_delete(UserName, LogID):
     if request.method == 'DELETE' :
         Log_entry = Logs.query.filter(Logs.LogID == LogID)
@@ -164,7 +163,7 @@ def log_delete(UserName, LogID):
             db.commit()
         return redirect('/', UserName, '/logs')
 
-@app.route('/<string:UserName>/logs/<integer:LogID>/edit', methods=['GET', 'POST'])
+@app.route('/<string:UserName>/logs/<string:LogID>/edit', methods=['GET', 'POST'])
 def log_edit(UserName, LogID):
     if request.method == 'GET':
         log_entry = Logs.query.filter(Logs.LogID == LogID).first()
