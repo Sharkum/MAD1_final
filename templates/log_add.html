@@ -14,7 +14,7 @@
     <h2  > Log </h2>
 <form action="/{{name}}/logs/add" method="POST" id="login"  >
     <div  >
-        <label  >When</label>
+        <label  >Date of log</label>
         <div  >
             <input type='datetime-local' name='datetime' value = {{current_datetime}} required />
         </div>
@@ -29,7 +29,7 @@
     <div  >
         <label  >Description</label>
         <div  >
-        <input type="text" name="notes" required />
+        <input type="text" name="desc" required />
         </div>
         <div  ></div>
     </div>

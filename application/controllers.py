@@ -137,7 +137,7 @@ def add_log(UserName):
         present_time = datetime.datetime.now()
         present_datetime = present_time.strftime ("%Y-%m-%dT%H:%M")
      
-        return render_template('log_add.html', name = UserName, current_datetime = present_datetime)
+        return render_template('log_add.html', name = UserName, present_datetime = present_datetime)
 
     if request.method == 'POST':
 
