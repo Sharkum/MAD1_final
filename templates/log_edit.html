@@ -8,24 +8,22 @@
     <h2  > Edit Log</h2>
 <form action="/{{name}}/logs/{{lid}}/edit" method="POST" id="edit"  >
     <div  >
-        <label  >When:</label>
+        <label  >Date of log</label>
         <div  >
-        <input type='datetime-local' name='datetime' value = {{last_modified}}  required />
-    </div>
-    <div  ></div>
+        <input type='datetime-local' name='date_created' value = {{log.Date_created}}  required />
+        </div>
     </div>
     <div  >
         <label  >Value</label>
         <div  >
-        <input type="number" step="any" name="value" placeholder={{current_log.value}}  required/>
-    </div>
-    <div  ></div>
+        <input type="number" step="any" name="value" placeholder={{log.Value}}  required/>
+        </div>
     </div>
     <div  >
-        <label  >Notes</label>
+        <label  >Description</label>
         <div  >
-        <input type="text" name="notes" placeholder={{current_log.notes}}  required />
-    </div>
+        <input type="text" name="desc" placeholder={{log.Description}} />
+        </div>
 </div>
     
 <div  >

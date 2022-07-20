@@ -1,4 +1,5 @@
 import datetime , calendar , os
+from distutils.log import Log
 from sqlalchemy import extract,func
 import numpy as np
 import matplotlib.pyplot as plt
@@ -54,7 +55,8 @@ def logs_page(UserName):
         for i in logs_queried:
             log_dic = i.__dict__
             log_dic['Last_modified'] = log_dic['Last_modified'][:16]
-            logs_list.append([log_dic['Last_modified'], log_dic['Value'], log_dic['Description'], log_dic['LogID']])
+            log_dic['Date_created'] = log_dic['Date_created'][:16]
+            logs_list.append([log_dic['Date_created'], log_dic['Value'], log_dic['Description'], log_dic['Last_modified'], log_dic['LogID']])
         return render_template('logs.html', logs_list= logs_list, name = UserName)
     
     
@@ -63,10 +65,10 @@ def logs_page(UserName):
         selected_period = int(request.form.get('period'))
 
         present_time = datetime.datetime.now()
-        logs_thisyear = Logs.query.filter(extract('year',Logs.Last_modified) == present_time.year)
-        logs_thismonth = logs_thisyear.filter(extract('month',Logs.Last_modified) == present_time.month)
-        logs_thisweek = logs_thismonth.filter(extract('week',func.date(Logs.Last_modified))== present_time.isocalendar().week)
-        logs_today = logs_thisweek.filter(extract('day',Logs.Last_modified) == present_time.day)
+        logs_thisyear = Logs.query.filter(extract('year',Logs.Date_created) == present_time.year)
+        logs_thismonth = logs_thisyear.filter(extract('month',Logs.Date_created) == present_time.month)
+        logs_thisweek = logs_thismonth.filter(extract('week',func.date(Logs.Date_created))== present_time.isocalendar().week)
+        logs_today = logs_thisweek.filter(extract('day',Logs.Date_created) == present_time.day)
 
         logs_periodwise = [logs_today,logs_thisweek,logs_thismonth]
         logs_list = []
@@ -93,10 +95,11 @@ def logs_page(UserName):
         x,y = [],[]
         for i in logs_intime:
             log_dic = i.__dict__
-            x.append(datetime.datetime.strptime(i.Last_modified[:16],"%Y-%m-%d %H:%M"))
+            x.append(datetime.datetime.strptime(i.Date_created[:16],"%Y-%m-%d %H:%M"))
             y.append(i.Value)
             log_dic['Last_modified'] = log_dic['Last_modified'][:16]
-            logs_list.append([log_dic['Last_modified'], log_dic['Value'], log_dic['Description'], log_dic['LogID']])
+            log_dic['Date_created'] = log_dic['Date_created'][:16]
+            logs_list.append([log_dic['Date_created'], log_dic['Value'], log_dic['Description'], log_dic['Last_modified'], log_dic['LogID']])
 
         x = np.array(x)
         y = np.array(y)
@@ -141,13 +144,14 @@ def add_log(UserName):
 
     if request.method == 'POST':
 
-        new_time = request.form.get('datetime').replace('T',' ')
+        new_time = request.form.get('date_created').replace('T',' ')
         new_datetime = datetime.datetime.strptime(new_time, "%Y-%m-%d %H:%M")
 
         new_log = Logs( UserName = UserName, \
                         Date_created = new_datetime.replace(second = 0),\
+                        Last_modified = datetime.datetime.now().replace(second = 0), \
                       Value = request.form.get('value'),\
-                      Description =request.form.get('notes'))
+                      Description =request.form.get('desc'))
         
         db.session.add(new_log)
         db.session.commit()
@@ -167,4 +171,14 @@ def log_delete(UserName, LogID):
 def log_edit(UserName, LogID):
     if request.method == 'GET':
         log_entry = Logs.query.filter(Logs.LogID == LogID).first()
-        return render_template('log_edit.html',log = log_entry)
+        return render_template('log_edit.html',log = log_entry, name = UserName, lid = LogID)
+    
+    if request.method == 'POST':
+        log_entry = Logs.query.filter(Logs.LogID == LogID).first()
+        log_entry.Date_created = request.form.get('date_created')
+        log_entry.Value = request.form.get('value')
+        log_entry.Description  = request.form.get('desc')
+        log_entry.Last_modified = datetime.datetime.now().replace(second = 0)
+        db.add(log_entry)
+        db.commit()
+        return redirect('/', UserName, '/logs')
