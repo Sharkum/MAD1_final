@@ -132,7 +132,6 @@ def logs_page(UserName):
 
 @app.route('/<string:UserName>/logs/add', methods=['GET', 'POST'])
 def add_log(UserName):
-    user_entry = User.query.filter(User.UserName == UserName).first()
 
     if request.method == 'GET':
         
@@ -147,7 +146,7 @@ def add_log(UserName):
         new_datetime = datetime.datetime.strptime(new_time, "%Y-%m-%d %H:%M")
 
         new_log = Logs( UserName = UserName, \
-                        Last_modified = new_datetime.replace(second = 0),\
+                        Date_created = new_datetime.replace(second = 0),\
                       Value = request.form.get('value'),\
                       Description =request.form.get('notes'))
         
@@ -155,3 +154,18 @@ def add_log(UserName):
         db.session.commit()
         
         return redirect('/'+ UserName+ '/logs')
+
+@app.route('/<string:UserName>/logs/<integer:LogID>/delete', methods=['DELETE'])
+def log_delete(UserName, LogID):
+    if request.method == 'DELETE' :
+        Log_entry = Logs.query.filter(Logs.LogID == LogID)
+        if Log_entry.all():
+            deleted = Log_entry.delete()
+            db.commit()
+        return redirect('/', UserName, '/logs')
+
+@app.route('/<string:UserName>/logs/<integer:LogID>/edit', methods=['GET', 'POST'])
+def log_edit(UserName, LogID):
+    if request.method == 'GET':
+        log_entry = Logs.query.filter(Logs.LogID == LogID).first()
+        return render_template('log_edit.html',log = log_entry)
