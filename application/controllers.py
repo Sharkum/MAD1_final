@@ -139,7 +139,6 @@ def add_log(UserName):
         
         present_time = datetime.datetime.now()
         present_datetime = present_time.strftime ("%Y-%m-%dT%H:%M")
-     
         return render_template('log_add.html', name = UserName, present_datetime = present_datetime)
 
     if request.method == 'POST':
@@ -158,27 +157,29 @@ def add_log(UserName):
         
         return redirect('/'+ UserName+ '/logs')
 
-@app.route('/<string:UserName>/logs/<string:LogID>/delete', methods=['DELETE'])
+@app.route('/<string:UserName>/logs/<int:LogID>/delete', methods=['GET'])
 def log_delete(UserName, LogID):
-    if request.method == 'DELETE' :
+    if request.method == 'GET' :
         Log_entry = Logs.query.filter(Logs.LogID == LogID)
         if Log_entry.all():
             deleted = Log_entry.delete()
-            db.commit()
-        return redirect('/', UserName, '/logs')
+            db.session.commit()
+        return redirect('/'+ UserName+'/logs')
 
-@app.route('/<string:UserName>/logs/<string:LogID>/edit', methods=['GET', 'POST'])
+@app.route('/<string:UserName>/logs/<int:LogID>/edit', methods=['GET', 'POST'])
 def log_edit(UserName, LogID):
     if request.method == 'GET':
         log_entry = Logs.query.filter(Logs.LogID == LogID).first()
-        return render_template('log_edit.html',log = log_entry, name = UserName, lid = LogID)
+        date_created = log_entry.Date_created.replace(' ', 'T')[:-3]
+        return render_template('log_edit.html',log = log_entry, name = UserName, lid = LogID, date_created = date_created)
     
     if request.method == 'POST':
         log_entry = Logs.query.filter(Logs.LogID == LogID).first()
-        log_entry.Date_created = request.form.get('date_created')
+        new_date = request.form.get('date_created').replace('T',' ')
+        log_entry.Date_created = datetime.datetime.strptime(new_date, "%Y-%m-%d %H:%M")
         log_entry.Value = request.form.get('value')
         log_entry.Description  = request.form.get('desc')
         log_entry.Last_modified = datetime.datetime.now().replace(second = 0)
-        db.add(log_entry)
-        db.commit()
-        return redirect('/', UserName, '/logs')
+        db.session.add(log_entry)
+        db.session.commit()
+        return redirect('/'+ UserName+'/logs')

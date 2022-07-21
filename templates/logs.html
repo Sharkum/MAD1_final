@@ -14,6 +14,7 @@
             <th>Last Modified</th>
             <th>Value</th>
             <th>Description</th>
+            <th>Last modified</th>
             <th>Actions</th>
         </tr>
         {%for i in logs_list%}
@@ -22,8 +23,8 @@
             <td>{{j}}</td>
             {% endfor %}
             <td>
-                <a href="/{{name}}/logs/edit/{{i[3]}}">Edit</a> <br> 
-                <a href="/{{name}}/logs/edit/{{i[3]}}">Delete</a>
+                <a href="/{{name}}/logs/{{i[4]}}/edit">Edit</a> <br> 
+                <a href="/{{name}}/logs/{{i[4]}}/delete">Delete</a>
             </td>
         </tr>
         {%endfor%}
