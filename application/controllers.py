@@ -1,5 +1,4 @@
 import datetime , calendar , os
-from distutils.log import Log
 from sqlalchemy import extract,func
 import numpy as np
 import matplotlib.pyplot as plt
@@ -55,8 +54,7 @@ def logs_page(UserName):
         for i in logs_queried:
             log_dic = i.__dict__
             log_dic['Last_modified'] = log_dic['Last_modified'][:16]
-            log_dic['Date_created'] = log_dic['Date_created'][:16]
-            logs_list.append([log_dic['Date_created'], log_dic['Value'], log_dic['Description'], log_dic['Last_modified'], log_dic['LogID']])
+            logs_list.append([log_dic['Last_modified'], log_dic['Value'], log_dic['Description'], log_dic['LogID']])
         return render_template('logs.html', logs_list= logs_list, name = UserName)
     
     
@@ -65,10 +63,10 @@ def logs_page(UserName):
         selected_period = int(request.form.get('period'))
 
         present_time = datetime.datetime.now()
-        logs_thisyear = Logs.query.filter(extract('year',Logs.Date_created) == present_time.year)
-        logs_thismonth = logs_thisyear.filter(extract('month',Logs.Date_created) == present_time.month)
-        logs_thisweek = logs_thismonth.filter(extract('week',func.date(Logs.Date_created))== present_time.isocalendar().week)
-        logs_today = logs_thisweek.filter(extract('day',Logs.Date_created) == present_time.day)
+        logs_thisyear = Logs.query.filter(extract('year',Logs.Last_modified) == present_time.year)
+        logs_thismonth = logs_thisyear.filter(extract('month',Logs.Last_modified) == present_time.month)
+        logs_thisweek = logs_thismonth.filter(extract('week',func.date(Logs.Last_modified))== present_time.isocalendar().week)
+        logs_today = logs_thisweek.filter(extract('day',Logs.Last_modified) == present_time.day)
 
         logs_periodwise = [logs_today,logs_thisweek,logs_thismonth]
         logs_list = []
@@ -95,11 +93,10 @@ def logs_page(UserName):
         x,y = [],[]
         for i in logs_intime:
             log_dic = i.__dict__
-            x.append(datetime.datetime.strptime(i.Date_created[:16],"%Y-%m-%d %H:%M"))
+            x.append(datetime.datetime.strptime(i.Last_modified[:16],"%Y-%m-%d %H:%M"))
             y.append(i.Value)
             log_dic['Last_modified'] = log_dic['Last_modified'][:16]
-            log_dic['Date_created'] = log_dic['Date_created'][:16]
-            logs_list.append([log_dic['Date_created'], log_dic['Value'], log_dic['Description'], log_dic['Last_modified'], log_dic['LogID']])
+            logs_list.append([log_dic['Last_modified'], log_dic['Value'], log_dic['Description'], log_dic['LogID']])
 
         x = np.array(x)
         y = np.array(y)
@@ -134,52 +131,26 @@ def logs_page(UserName):
 
 @app.route('/<string:UserName>/logs/add', methods=['GET', 'POST'])
 def add_log(UserName):
+    user_entry = User.query.filter(User.UserName == UserName).first()
 
     if request.method == 'GET':
         
         present_time = datetime.datetime.now()
         present_datetime = present_time.strftime ("%Y-%m-%dT%H:%M")
-        return render_template('log_add.html', name = UserName, present_datetime = present_datetime)
+     
+        return render_template('log_add.html', name = UserName, current_datetime = present_datetime)
 
     if request.method == 'POST':
 
-        new_time = request.form.get('date_created').replace('T',' ')
+        new_time = request.form.get('datetime').replace('T',' ')
         new_datetime = datetime.datetime.strptime(new_time, "%Y-%m-%d %H:%M")
 
         new_log = Logs( UserName = UserName, \
-                        Date_created = new_datetime.replace(second = 0),\
-                        Last_modified = datetime.datetime.now().replace(second = 0), \
+                        Last_modified = new_datetime.replace(second = 0),\
                       Value = request.form.get('value'),\
-                      Description =request.form.get('desc'))
+                      Description =request.form.get('notes'))
         
         db.session.add(new_log)
         db.session.commit()
         
         return redirect('/'+ UserName+ '/logs')
-
-@app.route('/<string:UserName>/logs/<int:LogID>/delete', methods=['GET'])
-def log_delete(UserName, LogID):
-    if request.method == 'GET' :
-        Log_entry = Logs.query.filter(Logs.LogID == LogID)
-        if Log_entry.all():
-            deleted = Log_entry.delete()
-            db.session.commit()
-        return redirect('/'+ UserName+'/logs')
-
-@app.route('/<string:UserName>/logs/<int:LogID>/edit', methods=['GET', 'POST'])
-def log_edit(UserName, LogID):
-    if request.method == 'GET':
-        log_entry = Logs.query.filter(Logs.LogID == LogID).first()
-        date_created = log_entry.Date_created.replace(' ', 'T')[:-3]
-        return render_template('log_edit.html',log = log_entry, name = UserName, lid = LogID, date_created = date_created)
-    
-    if request.method == 'POST':
-        log_entry = Logs.query.filter(Logs.LogID == LogID).first()
-        new_date = request.form.get('date_created').replace('T',' ')
-        log_entry.Date_created = datetime.datetime.strptime(new_date, "%Y-%m-%d %H:%M")
-        log_entry.Value = request.form.get('value')
-        log_entry.Description  = request.form.get('desc')
-        log_entry.Last_modified = datetime.datetime.now().replace(second = 0)
-        db.session.add(log_entry)
-        db.session.commit()
-        return redirect('/'+ UserName+'/logs')
