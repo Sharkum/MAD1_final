@@ -2,15 +2,16 @@
 <html>
 <head>
     <title> Active Trackers of {{name}}</title>
+    <link href="/static/css/main.min.css" rel="stylesheet" >
 </head>
 <body>
-    <nav>
-        <form action="/" method="GET"  >
-            <input type="submit" value="Logout"/>
+    <nav class="navbar navbar-expand-lg p-1">
+        <form action="/" method="GET" class="navbar-form">
+            <input type="submit" value="Logout" class="btn fw-bold text-decoration-none"/>
         </form>
     </nav>
-    <h1 >Trackers</h1>
-    <table>
+    <h1 class="text-center">Trackers</h1>
+    <table class="table table-dark text-center">
         <tr>
             <th>Tracker</th>
             <th>Status</th>
@@ -19,7 +20,7 @@
         </tr>
         {%for i in tracker_list %}
         <tr>
-            <td><a href='/{{name}}/{{i.Tracker_name}}'>{{i.Tracker_name}}</a></td>
+            <td><a href='/{{name}}/{{i.Tracker_name}}/logs'>{{i.Tracker_name}}</a></td>
             {% if i.Active > 0 %}
             <td>Active</td>
             {% else %}
@@ -31,8 +32,8 @@
         {%endfor%}
     </table>
 
-    <form action='/{{name}}/add'>
-        <input type="submit" value="Add a new Tracker"/>
+    <form action='/{{name}}/add' class="text-center">
+        <input type="submit" value="Add a new Tracker" class="btn btn-primary mb-3 text-center"/>
     </form>
 </body>
 </html>

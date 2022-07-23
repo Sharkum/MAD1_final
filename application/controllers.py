@@ -27,13 +27,13 @@ def login():
         return render_template('login.html', fail=False)
     if request.method == 'POST':
         UserName = request.form.get('name')
-        password = request.form.get('password')
+        password = request.form.get('pass')
         user_entry = User.query.filter(User.UserName == UserName).first()
         if not user_entry:
             return render_template('login.html',user_not_found = True, fail=False)
         else:
             if(user_entry.Password == password):
-                return redirect('/'+UserName+'/logs')
+                return redirect('/'+UserName+'/trackers')
             else:
                 return render_template('login.html', user_not_found=False, fail=True)
 
@@ -249,8 +249,7 @@ def log_edit(UserName,Tracker_name, LogID):
         log_entry.Value = request.form.get('value')
         log_entry.Description  = request.form.get('desc')
         log_entry.Last_modified = datetime.datetime.now().replace(second = 0)
-        
-        db.session.add(log_entry)
+
         db.session.commit()
 
         return redirect('/'+ UserName+'/'+Tracker_name+'/logs')

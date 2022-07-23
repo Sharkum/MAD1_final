@@ -2,28 +2,29 @@
 <html>
 <head>
     <title> Signup </title>
+    <link href="/static/css/main.min.css" rel="stylesheet" >
 </head>
 
-<body  > 
-    <nav>
-        <form action="/" method="GET"  >
-            <input type="submit" value="Go to Login"/>
+<body class="container"> 
+    <nav class="navbar navbar-expand-lg p-1">
+        <form action="/" method="GET" class="navbar-form">
+            <input type="submit" value="Go to Login" class="btn fw-bold text-decoration-none"/>
         </form>
     </nav>   
-    <h1  > Signup</h1>
+    <h1 class="text-center fw-bold display-4"> Signup</h1>
     <form action="/signup" method="POST" id="signup">
-        <div  >
-            <label  >Username:</label>
-            <input type='text' name='cname'  required />
+        <div class="container mb-3 col-6 text-center">
+            <label class="form-label display-6">Username:</label>
+            <input type='text' name='cname' class="form-control" required />
         </div>
     
-        <div  > 
-            <label  >Password</label>
-            <input type="password" name="cpass"  required />
+        <div class="container mb-3 col-6 text-center"> 
+            <label class="form-label display-6">Password</label>
+            <input type="password" name="cpass" class="form-control" required />
         </div>
         
-        <div  >
-            <input type="submit"  value = "Signup"  >
+        <div class="col-auto text-center">
+            <input type="submit"  value = "Signup" class="btn btn-primary mb-3">
         </div>
     </form>
 </body>

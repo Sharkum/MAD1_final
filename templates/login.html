@@ -2,30 +2,31 @@
 <html>
 <head>
     <title> Home </title>
+    <link href="/static/css/main.min.css" rel="stylesheet" >
 </head>
-<body>
+<body class="container">
     
-    <h1 >Trackiphy</h1>
+    <h1 class="text-center fw-bold display-1">Trackiphy</h1>
 <form action="/" method="POST" id="login" >
-    <div >
-        <label >Username</label>
-        <input name='name' required />
+    <div class="container mb-3 col-6 text-center">
+        <label class="form-label display-6">Username</label>
+        <input type="text" name='name' class="form-control" required />
     </div>
 
-    <div >
-        <label >Password</label>
-        <input name="pass" required />
+    <div class="container mb-3 col-6 text-center">
+        <label class="form-label display-6">Password</label>
+        <input type="password" name="pass" class="form-control" required />
     </div>
 
-    <div>
-        <input type="submit"  value = "Login" >
+    <div class="col-auto text-center">
+        <input type="submit"  value = "Login" class="btn btn-primary mb-3">
     </div>
     {% if fail %}
-    <p > Wrong login credentials. Please check your username and password</p>
+    <p class="text-center text-danger"> Wrong login credentials. Please check your username and password</p>
     {% endif %}
     {% if user_not_found %} 
-    <p> There are no accounts with this Username, please signup.</p>
+    <p class="text-center text-danger"> There are no accounts with this Username, please signup.</p>
     {% endif %}
 </form>
-<p >Don't have an account? <a href = '/signup'>Sign up</a></p>
+<p class="text-center">Don't have an account? <a href = '/signup'>Sign up</a></p>
 </body>

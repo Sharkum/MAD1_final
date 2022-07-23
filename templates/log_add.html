@@ -2,39 +2,41 @@
 <html>
 <head>
     <title> Add Log </title>
+    <link href="/static/css/main.min.css" rel="stylesheet" >
 </head>
-<body  >
+<body class="container ">
 
-    <nav>
-        <form action="/{{name}}/{{tracker_name}}/logs" method="GET"  >
-            <input type="submit" value="Go back"/>
+    <nav class="navbar navbar-expand-lg p-1">
+        <form action="/{{name}}/{{tracker_name}}/logs" method="GET"  class="navbar-form">
+            <input type="submit" value="Go back" class="btn fw-bold text-decoration-none"/>
         </form>
     </nav>
 
-    <h2 > Log </h2>
-<form action="/{{name}}/{{tracker_name}}/logs/add" method="POST" id="log_add"  >
-    <div  >
-        <label  >Date of log</label>
-        <div  >
-            <input type='datetime-local' name='date_created' value = {{present_datetime}} required />
+    <h2 class="text-center"> Log </h2>
+<form action="/{{name}}/{{tracker_name}}/logs/add" method="POST" id="log_add" class="container px-5 text-center">
+    <div class="mb-3 row justify-content-center">
+        <label class="display-4 col-sm-2 col-form-label text-lg-end">Date of log</label>
+        <div class="col-3">
+            <input type='datetime-local' name='date_created' value = {{present_datetime}} class="form-control" required />
         </div>
-        </div>
-    <div  >
-        <label  >Value</label>
-        <div  >
-        <input type="text" name="value" required />
-        </div>
-        <div  ></div>
+        <div class="col-2"></div>
     </div>
-    <div  >
-        <label  >Description</label>
-        <div  >
-        <input type="text" name="desc" required />
+    <div class="mb-3 row justify-content-center">
+        <label class="display-4 col-sm-2 col-form-label text-lg-end">Value</label>
+        <div class="col-3">
+            <input type="number" step="any" name="value" class="form-control" required />
         </div>
-        <div  ></div>
+        <div class="col-2"></div>
     </div>
-    <div  >
-        <input type="submit" value = "Submit"  >
+    <div class="mb-3 row justify-content-center">
+        <label class="display-4 col-sm-2 col-form-label text-lg-end">Description</label>
+        <div class="col-3">
+            <input type="text" name="desc" class="form-control" required />
+        </div>
+        <div class="col-2"></div>
+    </div>
+    <div class="py-3 text-center">
+        <input type="submit" value = "Submit" class="btn btn-primary mb-3">
     </div>
 </form>
 </body>

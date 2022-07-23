@@ -2,19 +2,20 @@
 <html>
 <head>
     <title> Logs </title>
+    <link href="/static/css/main.min.css" rel="stylesheet" >
 </head>
 
 <body>
-    <nav>
-        <form action="/{{name}}/trackers" method="GET"  >
-            <input type="submit" value="Go back"/>
+    <nav class="navbar navbar-expand-lg p-1">
+        <form action="/{{name}}/trackers" method="GET" class="navbar-form">
+            <input type="submit" value="Go back" class="btn fw-bold text-decoration-none"/>
         </form>
     </nav>
 
-    <h2  >Logs for {{tracker_name}}</h2>
-    <div  >
-        <div  >
-    <table  >
+    <h2 class="text-center">Logs for {{tracker_name}}</h2>
+    <div class="row">
+        <div class="col">
+    <table class="table table-dark text-center py-5">
         <tr>
             <th>Last Modified</th>
             <th>Value</th>
@@ -35,27 +36,29 @@
         {%endfor%}
     </table>
 </div>
-<div >
-    <div >
-        <form action="/{{name}}/{{tracker_name}}/logs" method="POST" id="time_period"  >
-            <div>
-                <select name="period" id="period"  >
+<div class="col">
+    <div class="container">
+        <form action="/{{name}}/{{tracker_name}}/logs" method="POST" id="time_period" class="container px-5">
+            <div class="row">
+                <select name="period" id="period" class="form-select col">
                     <option value=0>This day</option>
                     <option value=1>This week</option>
                     <option value=2>This month</option>
                 </select>
             </div>
-            <div>
-                <input type="submit" value = "Show">
+            <div class="col">
+                <input type="submit" value = "Show" class="btn btn mb-3 text-center">
             </div>
         </form>
-        <form action="/{{name}}/{{tracker_name}}/logs" >
-            <input type="submit" value="Show All"/>
+        <form action="/{{name}}/{{tracker_name}}/logs" class="mb-3 text-center col-1">
+            <input type="submit" value="Show All" class="btn btn mb-3 text-center"/>
         </form>
     </div>
-
-    <form action="/{{name}}/{{tracker_name}}/logs/add">
-        <input type="submit" value="Add a Log"/>
+    <div class="py-5">
+        <img src="{{ url_for('static', filename='trendline.jpg') }}" class="img-responsive" />
+    </div>
+    <form action="/{{name}}/{{tracker_name}}/logs/add" class="mb-3 text-center">
+        <input type="submit" value="Add a Log" class="btn btn mb-3 text-center"/>
     </form>
 </div>
 </body>
