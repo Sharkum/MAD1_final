@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title> Active Trackers of {{name}}</title>
+</head>
+<body>
+    <h1 >Trackers</h1>
+    <table>
+        <tr>
+            <th>Tracker</th>
+            <th>Description</th>
+            <th>Actions</th>
+        </tr>
+        {%for i in tracker_list %}
+        <tr>
+            <td><a href='/{{name}}/{{i.Tracker_name}}'>{{i.Tracker_name}}</a></td>
+            <td>{{i.Description}}</td>
+            <td><a href='/{{name}}/{{i.Tracker_name}}/edit'>Edit</a> <br> <a href='/{{name}}/{{i.Tracker_name}}/delete'>Delete</a></td>
+        </tr>
+        {%endfor%}
+    </table>
+
+    <form action='/{{name}}/trackers/add'>
+        <input type="submit" value="Add a new Tracker"/>
+    </form>
+</body>
+</html>

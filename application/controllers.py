@@ -27,12 +27,15 @@ def login():
         return render_template('login.html', fail=False)
     if request.method == 'POST':
         UserName = request.form.get('name')
-        user_entry = User.query.filter(User.UserName == request.form.get('name'))\
-                .filter(User.Password==request.form.get('pass')).all()
+        password = request.form.get('password')
+        user_entry = User.query.filter(User.UserName == UserName).first()
         if user_entry == []:
-            return render_template('login.html',fail = True)
+            return render_template('login.html',user_not_found = True, fail=False)
         else:
-            return redirect('/'+UserName+'/logs')
+            if(user_entry.Password == password):
+                return redirect('/'+UserName+'/logs')
+            else:
+                return render_template('login.html', user_not_found=False, fail=True)
 
 # Signup page
 @app.route('/signup', methods=['GET','POST'])
@@ -45,12 +48,18 @@ def signup():
         db.session.commit()
         return redirect('/'+request.form.get('cname') + '/logs')
 
+@app.route('/<string:UserName>/trackers', methods = ['GET', 'POST'])
+def userpage(UserName):
+    if request.method == 'GET' :
+        active_trackers =  Logs.query.filter(Logs.UserName == Logs.UserName).all()
+        
+
 # Shows logs associated with a given user.
-@app.route('/<string:UserName>/logs', methods=['GET', 'POST'])
-def logs_page(UserName):
+@app.route('/<string:UserName>/<string:Tracker_name>/logs', methods=['GET', 'POST'])
+def logs_page(UserName, Tracker_name):
     if request.method == 'GET':
 
-        logs_queried = Logs.query.filter(Logs.UserName == UserName).all()
+        logs_queried = Logs.query.filter(Logs.UserName == UserName).filter(Logs.Tracker_name == Tracker_name).all()
         logs_list = []
         for i in logs_queried:
             log_dic = i.__dict__

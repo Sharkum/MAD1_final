@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add tracker</title>
+</head>
+<body>
+    <h1> Add new Tracker</h1>
+    <form action="/{{name}}/trackers/add" method="POST" id="tracker_add">
+        <div>
+            <label >Name of tracker</label>
+            <div>
+                <input type='text' name='tracker_name' required />
+            </div>
+        </div>
+        <dic>
+            <label>Description</label>
+            <div>
+                <input type='text' name = 'tracker_desc' />
+            </div>
+        </dic>
+        <div>
+            <input type="submit" value = "Submit" >
+        </div>
+    </form>
+</body>
+</html>

@@ -23,8 +23,8 @@
             <td>{{j}}</td>
             {% endfor %}
             <td>
-                <a href="/{{name}}/logs/{{i[4]}}/edit">Edit</a> <br> 
-                <a href="/{{name}}/logs/{{i[4]}}/delete">Delete</a>
+                <a href="/{{name}}/{{tracker_name}}/logs/{{i[4]}}/edit">Edit</a> <br> 
+                <a href="/{{name}}/{{tracker_name}}/logs/{{i[4]}}/delete">Delete</a>
             </td>
         </tr>
         {%endfor%}
@@ -32,7 +32,7 @@
 </div>
 <div >
     <div >
-    <form action="/{{name}}/logs" method="POST" id="time_period"  >
+    <form action="/{{name}}/{{tracker_name}}/logs" method="POST" id="time_period"  >
         <div  >
         <select name="period" id="period"  >
             <option value=0>This day</option>
@@ -43,11 +43,11 @@
             <input type="submit" value = "Show">
         </div>
     </form>
-    <form action="/{{name}}/logs" >
+    <form action="/{{name}}/{{tracker_name}}/logs" >
         <input type="submit" value="Show All"/>
     </form></div>
 
-    <form action="/{{name}}/logs/add">
+    <form action="/{{name}}/{{tracker_name}}/logs/add">
         <input type="submit" value="Add a Log"/>
     </form>
 </div>
