@@ -48,13 +48,56 @@ def signup():
         db.session.commit()
         return redirect('/'+request.form.get('cname') + '/logs')
 
-@app.route('/<string:UserName>/trackers', methods = ['GET', 'POST'])
+@app.route('/<string:UserName>/trackers', methods = ['GET'])
 def userpage(UserName):
     if request.method == 'GET' :
-        active_trackers =  Logs.query.filter(Logs.UserName == Logs.UserName).all()
-        
+        all_trackers =  Trackers.query.filter(Trackers.UserName == UserName).all()
 
-# Shows logs associated with a given user.
+        return render_template('userpage.html',name= UserName, tracker_list = all_trackers)
+
+@app.route('<string:Username>/add', methods=['GET', 'POST'])
+def tracker_add(Username):
+    if request.method == 'GET':
+        return render_template('tracker_add.html', name = Username)
+    if request.method == 'POST':
+        tracker_name = request.form.get('tracker_name')
+        tracker_desc = request.form.get('tracker_desc')
+        new_tracker = Trackers(UserName = Username, Tracker_name = tracker_name,\
+                                Description = tracker_desc, Active = 0)
+        db.session.add(new_tracker)
+        db.session.commit()
+        return redirect('/'+ Username +'/'+tracker_name+'/logs')
+
+@app.route('<string:UserName>/<string:Tracker_name>/edit', methods=['GET', 'POST'])
+def tracker_edit(UserName, Tracker_name):
+    if request.method == 'GET':
+        tracker_info = Trackers.query.filter(Trackers.Tracker_name == Tracker_name).filter(Trackers.UserName == UserName).first()
+        return render_template('tracker_edit.html', name = UserName, tracker_name = Tracker_name, desc = tracker_info.Description)
+    
+    if request.method == 'POST':
+
+        tracker_info = Trackers.query.filter(Trackers.Tracker_name == Tracker_name).filter(Trackers.UserName == UserName).first()
+        new_tname = request.form.get('tracker_name')
+        new_desc = request.form.get('tracker_desc')
+        tracker_info.Tracker_name = new_tname
+        tracker_info.Description = new_desc
+        db.session.commit()
+
+        logs_info = Logs.query.filter(Logs.Tracker_name == Tracker_name).filter(Logs.UserName == UserName).update({"Tracker_name":new_tname})
+        db.session.commit()
+
+        return redirect('/'+ UserName+ '/trackers')
+
+@app.route('<string:UserName>/<string:Tracker_name/delete', method=['GET'])
+def tracker_delete(UserName, Tracker_name):
+    if request.method == 'GET':
+        tracker_info = Trackers.query.filter(Trackers.Tracker_name == Tracker_name).filter(Trackers.UserName == UserName).delete()
+        log_info = Logs.query.filter(Logs.Tracker_name == Tracker_name).filter(Logs.UserName == UserName).delete()
+        db.session.commit()
+
+        return redirect('/'+ UserName+ '/trackers')
+
+# Shows logs associated with a given user and tracker.
 @app.route('/<string:UserName>/<string:Tracker_name>/logs', methods=['GET', 'POST'])
 def logs_page(UserName, Tracker_name):
     if request.method == 'GET':
@@ -141,8 +184,8 @@ def logs_page(UserName, Tracker_name):
         
         return render_template('logs.html', logs_list=logs_list, name = UserName)
 
-@app.route('/<string:UserName>/logs/add', methods=['GET', 'POST'])
-def add_log(UserName):
+@app.route('/<string:UserName>/<string:Tracker_name>/logs/add', methods=['GET', 'POST'])
+def add_log(UserName, Tracker_name):
 
     if request.method == 'GET':
         
@@ -151,11 +194,12 @@ def add_log(UserName):
         return render_template('log_add.html', name = UserName, present_datetime = present_datetime)
 
     if request.method == 'POST':
-
+        
         new_time = request.form.get('date_created').replace('T',' ')
         new_datetime = datetime.datetime.strptime(new_time, "%Y-%m-%d %H:%M")
 
         new_log = Logs( UserName = UserName, \
+                        Tracker_name = Tracker_name, \
                         Date_created = new_datetime.replace(second = 0),\
                         Last_modified = datetime.datetime.now().replace(second = 0), \
                       Value = request.form.get('value'),\
@@ -164,31 +208,46 @@ def add_log(UserName):
         db.session.add(new_log)
         db.session.commit()
         
+        tracker_info = Trackers.query.filter(Trackers.UserName == UserName).filter(Trackers.Tracker_name == Tracker_name).first()
+        tracker_info.Active += 1
+        db.session.add(tracker_info)
+        db.session.commit()
+
         return redirect('/'+ UserName+ '/logs')
 
-@app.route('/<string:UserName>/logs/<int:LogID>/delete', methods=['GET'])
-def log_delete(UserName, LogID):
+@app.route('/<string:UserName>/<string:Tracker_name>/logs/<int:LogID>/delete', methods=['GET'])
+def log_delete(UserName,Tracker_name, LogID):
     if request.method == 'GET' :
         Log_entry = Logs.query.filter(Logs.LogID == LogID)
-        if Log_entry.all():
+        if Log_entry.first() != []:
             deleted = Log_entry.delete()
+            db.session.commit()
+            tracker_info = Trackers.query.filter(Trackers.Tracker_name == Tracker_name).filter(Trackers.UserName == UserName).first()
+            tracker_info.Active -= 1
+            db.session.add(tracker_info)
             db.session.commit()
         return redirect('/'+ UserName+'/logs')
 
 @app.route('/<string:UserName>/logs/<int:LogID>/edit', methods=['GET', 'POST'])
 def log_edit(UserName, LogID):
     if request.method == 'GET':
+        
         log_entry = Logs.query.filter(Logs.LogID == LogID).first()
         date_created = log_entry.Date_created.replace(' ', 'T')[:-3]
+        
         return render_template('log_edit.html',log = log_entry, name = UserName, lid = LogID, date_created = date_created)
     
     if request.method == 'POST':
+        
         log_entry = Logs.query.filter(Logs.LogID == LogID).first()
         new_date = request.form.get('date_created').replace('T',' ')
+        
         log_entry.Date_created = datetime.datetime.strptime(new_date, "%Y-%m-%d %H:%M")
         log_entry.Value = request.form.get('value')
         log_entry.Description  = request.form.get('desc')
         log_entry.Last_modified = datetime.datetime.now().replace(second = 0)
+        
         db.session.add(log_entry)
         db.session.commit()
+
         return redirect('/'+ UserName+'/logs')
