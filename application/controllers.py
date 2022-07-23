@@ -109,22 +109,24 @@ def logs_page(UserName, Tracker_name):
             log_dic['Last_modified'] = log_dic['Last_modified'][:16]
             log_dic['Date_created'] = log_dic['Date_created'][:16]
             logs_list.append([log_dic['Date_created'], log_dic['Value'], log_dic['Description'], log_dic['Last_modified'], log_dic['LogID']])
-        return render_template('logs.html', logs_list= logs_list, name = UserName)
+        
+        return render_template('logs.html', logs_list= logs_list, name = UserName, tracker_name = Tracker_name)
     
     
     if request.method == 'POST':
         
+        logs_queried = Logs.query.filter(Logs.UserName == UserName).filter(Logs.Tracker_name == Tracker_name)
         selected_period = int(request.form.get('period'))
 
         present_time = datetime.datetime.now()
-        logs_thisyear = Logs.query.filter(extract('year',Logs.Date_created) == present_time.year)
+        logs_thisyear = logs_queried.filter(extract('year',Logs.Date_created) == present_time.year)
         logs_thismonth = logs_thisyear.filter(extract('month',Logs.Date_created) == present_time.month)
         logs_thisweek = logs_thismonth.filter(extract('week',func.date(Logs.Date_created))== present_time.isocalendar().week)
         logs_today = logs_thisweek.filter(extract('day',Logs.Date_created) == present_time.day)
 
         logs_periodwise = [logs_today,logs_thisweek,logs_thismonth]
         logs_list = []
-        logs_intime = logs_periodwise[selected_period].filter(Logs.UserName == UserName).all()
+        logs_intime = logs_periodwise[selected_period].all()
         
         def new(x,y,days):
             newy = [[] for i in range(days)]
@@ -182,7 +184,7 @@ def logs_page(UserName, Tracker_name):
             else:
                 saveplot([0 for i in range(calendar.monthrange(present_time.year, present_time.month)[1])])
         
-        return render_template('logs.html', logs_list=logs_list, name = UserName)
+        return render_template('logs.html', logs_list=logs_list, name = UserName, tracker_name = Tracker_name)
 
 @app.route('/<string:UserName>/<string:Tracker_name>/logs/add', methods=['GET', 'POST'])
 def add_log(UserName, Tracker_name):
@@ -213,7 +215,7 @@ def add_log(UserName, Tracker_name):
         db.session.add(tracker_info)
         db.session.commit()
 
-        return redirect('/'+ UserName+ '/logs')
+        return redirect('/'+ UserName+ '/' + Tracker_name + '/logs')
 
 @app.route('/<string:UserName>/<string:Tracker_name>/logs/<int:LogID>/delete', methods=['GET'])
 def log_delete(UserName,Tracker_name, LogID):

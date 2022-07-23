@@ -32,25 +32,25 @@
 </div>
 <div >
     <div >
-    <form action="/{{name}}/{{tracker_name}}/logs" method="POST" id="time_period"  >
-        <div  >
-        <select name="period" id="period"  >
-            <option value=0>This day</option>
-            <option value=1>This week</option>
-            <option value=2>This month</option>
-        </select>
-        <div  >
-            <input type="submit" value = "Show">
-        </div>
-    </form>
-    <form action="/{{name}}/{{tracker_name}}/logs" >
-        <input type="submit" value="Show All"/>
-    </form></div>
+        <form action="/{{name}}/{{tracker_name}}/logs" method="POST" id="time_period"  >
+            <div>
+                <select name="period" id="period"  >
+                    <option value=0>This day</option>
+                    <option value=1>This week</option>
+                    <option value=2>This month</option>
+                </select>
+            </div>
+            <div>
+                <input type="submit" value = "Show">
+            </div>
+        </form>
+        <form action="/{{name}}/{{tracker_name}}/logs" >
+            <input type="submit" value="Show All"/>
+        </form>
+    </div>
 
     <form action="/{{name}}/{{tracker_name}}/logs/add">
         <input type="submit" value="Add a Log"/>
     </form>
 </div>
-</div>
-</div>
-    </body>
+</body>
