@@ -1,0 +1,20 @@
+The application is divided into modular parts with the script that runs the application in the `main.py` file in the root directory.
+
+Info about the files :-
+`application/` conatins all the modules of the flask application.
+    `config.py` contains the config information for the flask environment and application.
+    `controllers.py` contains the controllers of the application which query and handle the backend of the application
+    `database.py` contains the initialisation of the sqlalchemy database
+    `models.py` contains the sqlalchemy models of the tables in the database
+`static/` contains the css files and trendline image
+`templates/` contains the html files for each of the pages of the web application
+`database.sqlite3` is the sqlite3 database for the application
+`main.py` contains the script that imports all the packages and launches the application
+`requirements.txt` contains the required packages for the application. 
+
+The steps for launching the application is as follows:-
+
+1) Make sure that all the required packages are installed, otherwise install them using `pip install -r requirements.txt`
+
+2) Then just run `python3 main.py` to launch the application.
+
