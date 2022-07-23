@@ -5,14 +5,14 @@
 </head>
 <body  >
 
-    <nav  >
-        <form action="/{{name}}/logs" method="GET"  >
+    <nav>
+        <form action="/{{name}}/{{tracker_name}}/logs" method="GET"  >
             <input type="submit" value="Go back"/>
         </form>
     </nav>
 
     <h2 > Log </h2>
-<form action="/{{name}}/logs/add" method="POST" id="log_add"  >
+<form action="/{{name}}/{{tracker_name}}/logs/add" method="POST" id="log_add"  >
     <div  >
         <label  >Date of log</label>
         <div  >

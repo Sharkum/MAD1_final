@@ -4,9 +4,14 @@
     <title> Edit Log </title>
 </head>
 <body  >
+    <nav>
+        <form action="/{{name}}/{{tracker_name}}/logs" method="GET"  >
+            <input type="submit" value="Go back"/>
+        </form>
+    </nav>
     <h2  > Edit Log</h2>
-<form action="/{{name}}/logs/{{lid}}/edit" method="POST" id="log_edit"  >
-    <div  >
+    <form action="/{{name}}/{{tracker_name}}/logs/{{lid}}/edit" method="POST" id="log_edit"  >
+    <div >
         <label  >Date of log</label>
         <div  >
         <input type='datetime-local' name='date_created' value = {{date_created}}  required />

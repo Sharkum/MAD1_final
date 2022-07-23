@@ -4,6 +4,11 @@
     <title>Add tracker</title>
 </head>
 <body>
+    <nav>
+        <form action="/{{name}}/trackers" method="GET"  >
+            <input type="submit" value="Go back"/>
+        </form>
+    </nav>
     <h1> Add new Tracker</h1>
     <form action="/{{name}}/add" method="POST" id="tracker_add">
         <div>

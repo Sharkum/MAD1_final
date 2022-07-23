@@ -8,7 +8,7 @@ class Logs(db.Model):
     Tracker_name = db.Column(db.String, nullable=False)
     Date_created = db.Column(db.String, nullable=False)
     Last_modified = db.Column(db.String, nullable=False)
-    Value = db.Column(db.String, nullable = False)
+    Value = db.Column(db.Integer, nullable = False)
     Description = db.Column(db.String, nullable = True)
 
 class Trackers(db.Model):
@@ -16,6 +16,7 @@ class Trackers(db.Model):
     UserName = db.Column(db.String, nullable=False, primary_key=True)
     Tracker_name = db.Column(db.String, nullable=False, primary_key=True)
     Description = db.Column(db.String)
+    Active = db.Column(db.Integer, nullable=False)
 
 class User(db.Model):
     __tablename__ = 'User'

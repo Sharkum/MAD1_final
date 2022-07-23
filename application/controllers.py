@@ -29,7 +29,7 @@ def login():
         UserName = request.form.get('name')
         password = request.form.get('password')
         user_entry = User.query.filter(User.UserName == UserName).first()
-        if user_entry == []:
+        if not user_entry:
             return render_template('login.html',user_not_found = True, fail=False)
         else:
             if(user_entry.Password == password):
@@ -46,7 +46,7 @@ def signup():
         new_entry = User(UserName =  request.form.get('cname'), Password = request.form.get('cpass'))
         db.session.add(new_entry)
         db.session.commit()
-        return redirect('/'+request.form.get('cname') + '/logs')
+        return redirect('/'+request.form.get('cname') + '/trackers')
 
 @app.route('/<string:UserName>/trackers', methods = ['GET'])
 def userpage(UserName):
@@ -55,7 +55,7 @@ def userpage(UserName):
 
         return render_template('userpage.html',name= UserName, tracker_list = all_trackers)
 
-@app.route('<string:Username>/add', methods=['GET', 'POST'])
+@app.route('/<string:Username>/add', methods=['GET', 'POST'])
 def tracker_add(Username):
     if request.method == 'GET':
         return render_template('tracker_add.html', name = Username)
@@ -68,7 +68,7 @@ def tracker_add(Username):
         db.session.commit()
         return redirect('/'+ Username +'/'+tracker_name+'/logs')
 
-@app.route('<string:UserName>/<string:Tracker_name>/edit', methods=['GET', 'POST'])
+@app.route('/<string:UserName>/<string:Tracker_name>/edit', methods=['GET', 'POST'])
 def tracker_edit(UserName, Tracker_name):
     if request.method == 'GET':
         tracker_info = Trackers.query.filter(Trackers.Tracker_name == Tracker_name).filter(Trackers.UserName == UserName).first()
@@ -88,7 +88,7 @@ def tracker_edit(UserName, Tracker_name):
 
         return redirect('/'+ UserName+ '/trackers')
 
-@app.route('<string:UserName>/<string:Tracker_name/delete', method=['GET'])
+@app.route('/<string:UserName>/<string:Tracker_name>/delete', methods = ['GET'])
 def tracker_delete(UserName, Tracker_name):
     if request.method == 'GET':
         tracker_info = Trackers.query.filter(Trackers.Tracker_name == Tracker_name).filter(Trackers.UserName == UserName).delete()
@@ -193,7 +193,7 @@ def add_log(UserName, Tracker_name):
         
         present_time = datetime.datetime.now()
         present_datetime = present_time.strftime ("%Y-%m-%dT%H:%M")
-        return render_template('log_add.html', name = UserName, present_datetime = present_datetime)
+        return render_template('log_add.html', name = UserName, present_datetime = present_datetime, tracker_name = Tracker_name)
 
     if request.method == 'POST':
         
@@ -228,16 +228,17 @@ def log_delete(UserName,Tracker_name, LogID):
             tracker_info.Active -= 1
             db.session.add(tracker_info)
             db.session.commit()
-        return redirect('/'+ UserName+'/logs')
+        return redirect('/'+ UserName+'/'+ Tracker_name+'/logs')
 
-@app.route('/<string:UserName>/logs/<int:LogID>/edit', methods=['GET', 'POST'])
-def log_edit(UserName, LogID):
+@app.route('/<string:UserName>/<string:Tracker_name>/logs/<int:LogID>/edit', methods=['GET', 'POST'])
+def log_edit(UserName,Tracker_name, LogID):
     if request.method == 'GET':
         
         log_entry = Logs.query.filter(Logs.LogID == LogID).first()
         date_created = log_entry.Date_created.replace(' ', 'T')[:-3]
         
-        return render_template('log_edit.html',log = log_entry, name = UserName, lid = LogID, date_created = date_created)
+        return render_template('log_edit.html',log = log_entry, name = UserName,\
+             lid = LogID, date_created = date_created, tracker_name = Tracker_name)
     
     if request.method == 'POST':
         
@@ -252,4 +253,4 @@ def log_edit(UserName, LogID):
         db.session.add(log_entry)
         db.session.commit()
 
-        return redirect('/'+ UserName+'/logs')
+        return redirect('/'+ UserName+'/'+Tracker_name+'/logs')
