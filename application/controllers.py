@@ -140,11 +140,14 @@ def logs_page(UserName, Tracker_name):
             y = np.array(newy)
             return y
 
-        def saveplot(y):
+        def saveplot(y,original_ticks, new_ticks, xlabel):
             fig = plt.figure()
             _ = plt.plot(range(1,len(y)+1),y)
+            plt.xticks(original_ticks, new_ticks)
+            plt.ylabel('Average of values by '+ xlabel)
+            plt.xlabel(xlabel)
             plt.savefig('static/trendline.jpg')
-            return
+            return 
         
         x,y = [],[]
         for i in logs_intime:
@@ -161,28 +164,29 @@ def logs_page(UserName, Tracker_name):
         if selected_period == 0:
             midnight = present_time.replace(hour=0, minute=0, second=0, microsecond=0)
             if x.shape[0]:
-                x = np.apply_along_axis(lambda z:z[0].seconds//60,axis=1,arr=(x-midnight).reshape(-1,1))
-                y = new(x,y,60*24)
-                saveplot(y)
+                x = np.apply_along_axis(lambda z:z[0].seconds//3600-1,axis=1,arr=(x-midnight).reshape(-1,1))
+                y = new(x,y,24)
+                saveplot(y,range(1,25,2),range(1,25,2), "Hours")
             else:
-                saveplot([0 for i in range(60*24)])
+                saveplot([0 for i in range(1,25)],range(0,24,2),range(1,25,2),"Hours")
         
         if selected_period == 1:
             if x.shape[0]:
-                weekstart = present_time-datetime.timedelta(days=present_time.weekday())
-                x = np.apply_along_axis(lambda z :z[0].days,axis=1, arr = (x-weekstart).reshape(-1,1))
+                weekstart = present_time - datetime.timedelta(days=present_time.weekday())
+                x = np.apply_along_axis(lambda z :z[0].days+1,axis=1, arr = (x-weekstart).reshape(-1,1))
                 y = new(x,y,7)
-                saveplot(y)
+                saveplot(y, range(1,8), ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],"Weekday")
             else:
-                saveplot([0 for i in range(7)])
+                saveplot([0 for i in range(1,8)], range(1,8), [ 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],"Weekday")
         
         if selected_period ==2:
             if x.shape[0]:
                 x = np.apply_along_axis(lambda z:z[0].day-1,axis=1,arr=(x).reshape(-1,1))
-                y = new(x,y,calendar.monthrange(present_time.year, present_time.month)[1])
-                saveplot(y)
+                days_in_month = calendar.monthrange(present_time.year, present_time.month)[1]
+                y = new(x,y,days_in_month)
+                saveplot(y, range(1,days_in_month,2), range(1,days_in_month,2),"Day of this month")
             else:
-                saveplot([0 for i in range(calendar.monthrange(present_time.year, present_time.month)[1])])
+                saveplot([0 for i in range(days_in_month)], range(1,days_in_month,2), range(1,days_in_month,2),"Day of this month")
         
         return render_template('logs.html', logs_list=logs_list, name = UserName, tracker_name = Tracker_name)
 
