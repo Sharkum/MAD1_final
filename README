@@ -1,4 +1,4 @@
-The application is divided into modular parts with the script that runs the application in the "main.py" file in the root directory.
+The application is divided into modular parts with the script that runs the application in the `main.py` file in the root directory.
 
 Info about the files :-
 `application/` conatins all the modules of the flask application.
