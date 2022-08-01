@@ -15,5 +15,10 @@ app.app_context().push()
 
 from application.controllers import *
 
+from application.api import *
+api.add_resource(Users, "/api/<string:name>")
+api.add_resource(Trackers, "/api/tracker")
+api.add_resource(Logs,"/api/tracker/<string:name>/<string:tracker_name>","/api/tracker/<string:tracker_name>/add/<string:name>")
+
 if __name__ == "__main__":
     app.run(debug = True)
